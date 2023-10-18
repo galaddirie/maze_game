@@ -1,0 +1,27 @@
+
+.maze {
+    display: grid;
+    gap: 1px;
+}
+
+.maze-cell {
+    width: 20px;
+    height: 20px;
+}
+
+.maze-cell.wall {
+    background-color: black;
+}
+
+.maze-cell.path {
+    background-color: white;
+}
+
+.maze-cell.entry {
+    background-color: green;
+}
+
+.maze-cell.exit {
+    background-color: red;
+}
+
