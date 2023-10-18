@@ -1,28 +1,30 @@
-function createEmptyMazeBox(width: number, height: number, entrance: {x: number, y: number}, exit: {x: number, y: number}): Maze {
+function createEmptyMazeBox(width: number, height: number, entrance: {x: number, y: number}, exit: {x: number, y: number} | null): Maze {
     const cells: MazeCell[] = [];
 
     
 
     for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
-        // Check if it's the entrance or exit
         if (x === entrance.x && y === entrance.y) {
             cells.push({ x, y, type: 'ENTRY' });
-        } else if (x === exit.x && y === exit.y) {
+        } else if (exit && x === exit.x && y === exit.y) {
             cells.push({ x, y, type: 'EXIT' });
         } else if (x === 0 || y === 0 || x === width - 1 || y === height - 1) {
-            // Check if it's on the border
             cells.push({ x, y, type: 'WALL' });
         } else {
             cells.push({ x, y, type: 'PATH' });
         }
         }
     }
+    //remove the wall above the entrance
+    cells[entrance.x + (entrance.y - 1) * width].type = 'PATH';
+    //remove the wall below the exit
+    if (exit) cells[exit.x + (exit.y + 1) * width].type = 'PATH';
 
   return { width, height, cells };
 }
 
-function generateMaze(width: number, height: number, entrance: { x: number, y: number }, exit: { x: number, y: number }): Maze {
+function generateMaze(width: number, height: number, entrance: { x: number, y: number }, exit: { x: number, y: number } | null): Maze {
   const maze: Maze = {
     width,
     height,
@@ -95,7 +97,6 @@ function generateMaze(width: number, height: number, entrance: { x: number, y: n
     markCellAsVisited({ x, y, type: 'PATH' });
   }
 
-  // Start with the entrance cell
   stack.push({ ...entrance, type: 'ENTRY' });
   markCellAsVisited({ ...entrance, type: 'ENTRY' });
 
@@ -111,9 +112,12 @@ function generateMaze(width: number, height: number, entrance: { x: number, y: n
     }
   }
 
-  // Mark the exit cell
-  markCellAsVisited({ ...exit, type: 'EXIT' });
-
+  if (exit) markCellAsVisited({ ...exit, type: 'EXIT' });
+  
+  //remove the wall above the entrance
+  markCellAsVisited({ x: entrance.x, y: entrance.y - 1, type: 'PATH' });
+  //remove the wall below the exit
+  if (exit) markCellAsVisited({ x: exit.x, y: exit.y + 1, type: 'PATH' });
   return maze;
 }
 

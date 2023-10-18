@@ -25,20 +25,25 @@ function getRandomOddInt(min: number, max: number) {
 }
 
 
-const WIDTH = 21;
-const HEIGHT = 21;
-const TOP = 1;
-const BOTTOM = HEIGHT - 2;
 
-// gross!
-const PORTAL1 = getRandomOddInt(1, WIDTH - 2);
-const PORTAL2 = getRandomOddInt(1, WIDTH - 2);
-const PORTAL3 = getRandomOddInt(1, WIDTH - 2);
 
 const Game: React.FC = () => {
+  const WIDTH = 21;
+  const HEIGHT = 21;
+  const TOP = 1;
+  const BOTTOM = HEIGHT - 2;
+
+  // gross! portals are hardcoded and must be odd and cannont be on an edge!
+  // otherwise the maze generator will fail due to the implementation 
+  const PORTAL0 = 1
+  const PORTAL1 = Math.floor(WIDTH/2)
+  const PORTAL2 = Math.floor(WIDTH/2)
+  const PORTAL3 = getRandomOddInt(1, WIDTH - 2);
+  const PORTAL4 = getRandomOddInt(1, WIDTH - 2);
+  const PORTAL5 = getRandomOddInt(1, WIDTH - 2);
   
   const maze1 = generateMaze(WIDTH, HEIGHT, 
-    { x: 1, y: TOP }, 
+    { x: PORTAL0, y: TOP }, 
     { x: PORTAL1, y: BOTTOM}
   );
   const box1  = createEmptyMazeBox (WIDTH, HEIGHT, 
@@ -48,12 +53,19 @@ const Game: React.FC = () => {
     { x: PORTAL2, y: TOP }, 
     { x: PORTAL3, y: BOTTOM }
   );
-  const box2  = createEmptyMazeBox (WIDTH, HEIGHT, 
+  const box2 = createEmptyMazeBox (WIDTH, HEIGHT, 
     { x: PORTAL3, y: TOP }, 
-    { x: 3, y:BOTTOM }
+    { x: PORTAL4, y:BOTTOM }
     );
+  const maze3 = generateMaze(WIDTH, HEIGHT,
+    { x: PORTAL4, y: TOP }, 
+    { x: PORTAL5, y: BOTTOM }
+  );
+  const trophy = createEmptyMazeBox (WIDTH, HEIGHT,
+    { x: PORTAL5, y: TOP }, 
+    null
+  );
 
-  // You can continue this pattern for more mazes and boxes...
 
   return (
     <div className="game">
@@ -61,7 +73,8 @@ const Game: React.FC = () => {
       <MazeComponent maze={box1} />
       <MazeComponent maze={maze2} />
       <MazeComponent maze={box2} />
-      {/* Render more mazes and boxes as needed */}
+      <MazeComponent maze={maze3} />
+      <MazeComponent maze={trophy} />
     </div>
   );
 };
